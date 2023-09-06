@@ -1,0 +1,14 @@
+A Library maintains a database about Books, Authors, Users and
+Circulation by the following tables
+BOOKS(BOOKID,TITLE,COST)
+AUTHORS(BOOKID,AUTHOR)
+USERS(USERID,NAME,CATEGORY)
+CIRCULATION(USERID,BOOKID,ISSUEDATE,RECEIPTDATE)
+
+GIVE SQL STATEMENTS FOR FOLLOWING
+
+1)Find the titles of books where ULLMAN is an author
+2)Find the usernames of all users who have not returned books costing above
+rs 300
+3)Find titles of books issued to users of category 3 costing avbove rs 300
+4)Find titles of books due to be returned. RECEIPTDATE can be 15 days after ISSUEDATE.

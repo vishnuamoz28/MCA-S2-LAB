@@ -1,0 +1,96 @@
+-- 1. BOOK --
+
+SQL> create table BOOK(BOOKID int primary key,TITTLE varchar(10),PAGES int,PRICE int)
+
+SQL> insert into BOOK values(&BOOKID,"&TITTLE",&PAGES,&PRICE);
+  Enter value for bookid: 101
+  Enter value for tittle: Database
+  Enter value for pages: 522
+  Enter value for price: 799
+SQL> /
+  Enter value for bookid: 102
+  Enter value for tittle: Java
+  Enter value for pages: 655
+  Enter value for price: 999
+SQL> /
+  Enter value for bookid: 103
+  Enter value for tittle: Os
+  Enter value for pages: 788
+  Enter value for price: 855
+SQL> /
+  Enter value for bookid: 104
+  Enter value for tittle: Acn
+  Enter value for pages: 699
+  Enter value for price: 756
+SQL> /
+  Enter value for bookid: 105
+  Enter value for tittle: Python
+  Enter value for pages: 455
+  Enter value for price: 399
+
+SQL> create table AUTHOR(AUTHORID int primary key,AUTHOR_NAME varchar(10),ADDRESS varchar(10),BOOKID INT references BOOK(BOOKID));
+
+SQL> insert into AUTHOR VALUES(&AUTHORID,'&AUTHOR_NAME','&ADDRESS',&BOOKID);
+  Enter value for authorid: 1001
+  Enter value for author_name: Hudson plb
+  Enter value for address: chennai
+  Enter value for bookid: 101
+SQL> /
+  Enter value for authorid: 1002
+  Enter value for author_name: Herbict
+  Enter value for address: benglur
+  Enter value for bookid: 102
+SQL> /
+  Enter value for authorid: 1003
+  Enter value for author_name: Balaguru
+  Enter value for address: dubai
+  Enter value for bookid: 103
+SQL> /
+  Enter value for authorid: 1004
+  Enter value for author_name: d j morg
+  Enter value for address: delhi
+  Enter value for bookid: 104
+SQL> /
+  Enter value for authorid: 1005
+  Enter value for author_name: bravo j
+  Enter value for address: up
+  Enter value for bookid: 105
+
+SQL> create table STUDENT_CARD(ROLLNO int PRIMARY KEY,BRANCH varchar(10),AGE int,BOOKID int references BOOK(BOOKID),AUTHORID int references AUTHOR(AUTHORID));
+
+SQL> insert into STUDENT_CARD values(&ROLLNO,'&BRANCH',&AGE,&BOOKID,&AUTHORID);
+  Enter value for rollno: 1
+  Enter value for branch: MCA
+  Enter value for age: 22
+  Enter value for bookid: 101
+  Enter value for authorid: 1001
+SQL> /
+  Enter value for rollno: 2
+  Enter value for branch: MBA
+  Enter value for age: 23
+  Enter value for bookid: 102
+  Enter value for authorid: 1002
+SQL> /
+  Enter value for rollno: 3
+  Enter value for branch: BTECH
+  Enter value for age: 20
+  Enter value for bookid: 103
+  Enter value for authorid: 1003
+SQL> /
+  Enter value for rollno: 4
+  Enter value for branch: MTECH
+  Enter value for age: 25
+  Enter value for bookid: 104
+  Enter value for authorid: 1004
+SQL> /
+  Enter value for rollno: 5
+  Enter value for branch: MSW
+  Enter value for age: 22
+  Enter value for bookid: 105
+  Enter value for authorid: 1005
+
+SQL> select AUTHOR.AUTHORID,AUTHOR_NAME,ADDRESS,BOOK.BOOKID,PAGES from AUTHOR,BOOK where author.BOOKID=BOOK.BOOKID and PAGES=(select max(pages)from BOOK);
+
+SQL> select ROLLNO,AGE,BRANCH from STUDENT_CARD,BOOK where STUDENT_CARD.BOOKID=BOOK.BOOKID and TITTLE!=’OS’;
+
+ 

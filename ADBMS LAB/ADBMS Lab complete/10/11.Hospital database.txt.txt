@@ -1,0 +1,313 @@
+
+11.HOSPITAL DATABASE APPLICATION
+
+1)  a.create table Patient(patient_no int PRIMARY KEY,name varchar(11),dob date,age int,place varchar(14));
+
+    b.create table Doctor(doctor_id int PRIMARY KEY,specialization varchar(20),salary int)
+
+
+    c.create table Treatment(patient_no int references Patient,doctor_id int references Doctor,fromdate date,todate date);
+
+
+
+ insert into patient values(&patient_no,'&name','&dob',&age,'&place');
+
+i)  1.select * from patient where patient_no in(select patient_no from treatment where doctor_id in(select doctor_id from doctor where salary in(select max(salary) from doctor)));
+
+    2.select doctor_id,specialization from doctor where doctor_id in(select doctor_id from treatment where fromdate>='03-jun-2022'and todate<='03-oct-2022');
+
+    3.select * from patient where patient_no in(select patient_no from treatment where todate>='01-aug-2022'and todate<='31-aug-2022');
+
+
+
+ii) 1.create or replace trigger delpatient before delete on patient
+      for each row
+      begin
+      if :old.dob >'01-jan-1910' then
+      raise_application_error(-20101, 'not possible');
+      end if; 
+      end;
+      /
+
+    2.create or replace trigger updoctor before update on doctor
+      for each row
+      begin
+      if :old.specialization !='pediatric' then
+      raise_application_error(-20101, 'updation not possible');
+      end if;
+      end;
+      /
+
+
+
+
+
+
+
+
+
+PROGRAM ANS WITH OUTPUT
+
+SQL> create table Patient(patient_no int PRIMARY KEY,name varchar(11),dob date,age int,place varchar(14));
+create table Patient(patient_no int PRIMARY KEY,name varchar(11),dob date,age int,place varchar(14))
+             *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object
+
+
+SQL> desc Patient;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ PATIENT_NO                                NOT NULL NUMBER(38)
+ NAME                                               VARCHAR2(11)
+ DOB                                                DATE
+ AGE                                                NUMBER(38)
+ PLACE                                              VARCHAR2(14)
+
+SQL> desc doctor;;
+SP2-0565: Illegal identifier.
+SQL> desc doctor;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ DOCTOR_ID                                 NOT NULL NUMBER(38)
+ SPECIALIZATION                                     VARCHAR2(20)
+ SALARY                                             NUMBER(38)
+
+SQL> desc treatment;;
+SP2-0565: Illegal identifier.
+SQL> desc treatment;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ PATIENT_NO                                         NUMBER(38)
+ DOCTOR_ID                                          NUMBER(38)
+ FROMDATE                                           DATE
+ TODATE                                             DATE
+
+SQL> select * from Patient;
+
+no rows selected
+
+SQL>  insert into patient values(&patient_no,'&name','&dob',&age,'&place');
+Enter value for patient_no: 100
+Enter value for name: amal
+Enter value for dob: 02-jan-02
+Enter value for age: 23
+Enter value for place: tvm
+old   1:  insert into patient values(&patient_no,'&name','&dob',&age,'&place')
+new   1:  insert into patient values(100,'amal','02-jan-02',23,'tvm')
+
+1 row created.
+
+SQL> /
+Enter value for patient_no: 101
+Enter value for name: asif
+Enter value for dob: 12-mar-02
+Enter value for age: 22
+Enter value for place: klm
+old   1:  insert into patient values(&patient_no,'&name','&dob',&age,'&place')
+new   1:  insert into patient values(101,'asif','12-mar-02',22,'klm')
+
+1 row created.
+
+SQL> /
+Enter value for patient_no: 102
+Enter value for name: siva
+Enter value for dob: 20-jun-04
+Enter value for age: 25
+Enter value for place: ernklm
+old   1:  insert into patient values(&patient_no,'&name','&dob',&age,'&place')
+new   1:  insert into patient values(102,'siva','20-jun-04',25,'ernklm')
+
+1 row created.
+
+SQL> select * from Patient;
+
+PATIENT_NO NAME        DOB              AGE PLACE
+---------- ----------- --------- ---------- --------------
+       100 amal        02-JAN-02         23 tvm
+       101 asif        12-MAR-02         22 klm
+       102 siva        20-JUN-04         25 ernklm
+
+SQL> desc doctor;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ DOCTOR_ID                                 NOT NULL NUMBER(38)
+ SPECIALIZATION                                     VARCHAR2(20)
+ SALARY                                             NUMBER(38)
+
+SQL> insert into doctor values(&doctor_id,'&specialisation',&salary);
+Enter value for doctor_id: 10
+Enter value for specialisation: neurosurgeon
+Enter value for salary: 55000
+old   1: insert into doctor values(&doctor_id,'&specialisation',&salary)
+new   1: insert into doctor values(10,'neurosurgeon',55000)
+
+1 row created.
+
+SQL> /
+Enter value for doctor_id: 11
+Enter value for specialisation: pediatrics
+Enter value for salary: 60000
+old   1: insert into doctor values(&doctor_id,'&specialisation',&salary)
+new   1: insert into doctor values(11,'pediatrics',60000)
+
+1 row created.
+
+SQL> /
+Enter value for doctor_id: 12
+Enter value for specialisation: orthopedics
+Enter value for salary: 75000
+old   1: insert into doctor values(&doctor_id,'&specialisation',&salary)
+new   1: insert into doctor values(12,'orthopedics',75000)
+
+1 row created.
+
+SQL> select * from doctor;
+
+ DOCTOR_ID SPECIALIZATION           SALARY
+---------- -------------------- ----------
+        10 neurosurgeon              55000
+        11 pediatrics                60000
+        12 orthopedics               75000
+
+SQL> desc treatment;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ PATIENT_NO                                         NUMBER(38)
+ DOCTOR_ID                                          NUMBER(38)
+ FROMDATE                                           DATE
+ TODATE                                             DATE
+
+SQL> insert into treatment values(&patient_no,&doctor_id,'&fromdate','&todate');
+Enter value for patient_no: 102
+Enter value for doctor_id: 11
+Enter value for fromdate: 10-07-2022
+Enter value for todate: 20-09-2022
+old   1: insert into treatment values(&patient_no,&doctor_id,'&fromdate','&todate')
+new   1: insert into treatment values(102,11,'10-07-2022','20-09-2022')
+insert into treatment values(102,11,'10-07-2022','20-09-2022')
+                                    *
+ERROR at line 1:
+ORA-01843: not a valid month
+
+
+SQL> insert into treatment values(&patient_no,&doctor_id,'&fromdate','&todate');
+Enter value for patient_no: 102
+Enter value for doctor_id: 11
+Enter value for fromdate: 10-07-22
+Enter value for todate: 20-09-22
+old   1: insert into treatment values(&patient_no,&doctor_id,'&fromdate','&todate')
+new   1: insert into treatment values(102,11,'10-07-22','20-09-22')
+insert into treatment values(102,11,'10-07-22','20-09-22')
+                                    *
+ERROR at line 1:
+ORA-01843: not a valid month
+
+
+SQL> insert into treatment values(&patient_no,&doctor_id,'&fromdate','&todate');
+Enter value for patient_no: 102
+Enter value for doctor_id: 11
+Enter value for fromdate: 10-jul-2022
+Enter value for todate: 20-aug-2022
+old   1: insert into treatment values(&patient_no,&doctor_id,'&fromdate','&todate')
+new   1: insert into treatment values(102,11,'10-jul-2022','20-aug-2022')
+
+1 row created.
+
+SQL> /
+Enter value for patient_no: 100
+Enter value for doctor_id: 12
+Enter value for fromdate: 01-apr-2022
+Enter value for todate: 30-jul-2022
+old   1: insert into treatment values(&patient_no,&doctor_id,'&fromdate','&todate')
+new   1: insert into treatment values(100,12,'01-apr-2022','30-jul-2022')
+
+1 row created.
+
+SQL> /
+Enter value for patient_no: 101
+Enter value for doctor_id: 10
+Enter value for fromdate: 30-jul-2022
+Enter value for todate: 01-oct-2022
+old   1: insert into treatment values(&patient_no,&doctor_id,'&fromdate','&todate')
+new   1: insert into treatment values(101,10,'30-jul-2022','01-oct-2022')
+
+1 row created.
+
+SQL> select * from treatment;
+
+PATIENT_NO  DOCTOR_ID FROMDATE  TODATE
+---------- ---------- --------- ---------
+       102         11 10-JUL-22 20-AUG-22
+       100         12 01-APR-22 30-JUL-22
+       101         10 30-JUL-22 01-OCT-22
+
+SQL> select doctor_id, specialization from doctor where doctor_id in
+  2     (select doctor_id from treatment where from_date >='04-jun-20022 and date_to <= '03-  oct-2022');
+ERROR:
+ORA-01756: quoted string not properly terminated
+
+
+SQL> select * from patient where patient_no in(select patient_no from treatment where doctor_id in(select doctor_id from doctor where salary in(select max(salary) from doctor)));
+
+PATIENT_NO NAME        DOB              AGE PLACE
+---------- ----------- --------- ---------- --------------
+       100 amal        02-JAN-02         23 tvm
+
+SQL> select doctor_id,specialization from doctor where doctor_id in(select doctor_id from treatment where fromdate>='03-jun-2022'and todate<='03-oct-2022');
+
+ DOCTOR_ID SPECIALIZATION
+---------- --------------------
+        10 neurosurgeon
+        11 pediatrics
+
+SQL> select * from patient where patient_no in(select patient_no from treatment where todate>='01-aug-2022'and todate<='31-aug-2022');
+
+PATIENT_NO NAME        DOB              AGE PLACE
+---------- ----------- --------- ---------- --------------
+       102 siva        20-JUN-04         25 ernklm
+
+SQL> create or replace trigger delpatient before delete on patient
+  2        for each row
+  3        begin
+  4        if :old.dob >'01-jan-1910' then
+  5        raise_application_error(-20101, 'not possible');
+  6        end if;
+  7        end;
+  8        /
+
+Trigger created.
+
+SQL> delete from Patient where patient_no=100;
+delete from Patient where patient_no=100
+            *
+ERROR at line 1:
+ORA-20101: not possible
+ORA-06512: at "SYSTEM.DELPATIENT", line 3
+ORA-04088: error during execution of trigger 'SYSTEM.DELPATIENT'
+
+
+SQL> create or replace trigger updoctor before update on doctor
+  2        for each row
+  3        begin
+  4        if :old.specialization !='pediatric' then
+  5        raise_application_error(-20101, 'updation not possible');
+  6        end if;
+  7        end;
+  8        /
+
+Trigger created.
+
+SQL> update doctor set salary=80000 where doctor_id=12;
+update doctor set salary=80000 where doctor_id=12
+       *
+ERROR at line 1:
+ORA-20101: updation not possible
+ORA-06512: at "SYSTEM.UPDOCTOR", line 3
+ORA-04088: error during execution of trigger 'SYSTEM.UPDOCTOR'
+
+
+
+
+
+
